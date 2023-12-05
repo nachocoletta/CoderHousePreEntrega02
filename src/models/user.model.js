@@ -6,8 +6,10 @@ const userSchema = new mongoose.Schema({
     email: { type: String, unique: true },
     age: Number,
     password: String,
+    cart: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart' },
     rol: { type: String, default: "user" },
-    provider: String
+    provider: String,
+
 }, { timestamps: true });
 
 export default mongoose.model('User', userSchema);

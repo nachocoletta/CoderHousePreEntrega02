@@ -1,7 +1,8 @@
 import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as LocalStrategy, Strategy } from 'passport-local';
 import { Strategy as GithubStrategy } from 'passport-github2'
 import { createHash, isValidPassword } from '../helpers/utils.js';
+import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt';
 import UserManager from '../dao/UserManager.js';
 import 'dotenv/config';
 
@@ -13,6 +14,20 @@ const githubOptions = {
     clientID: process.env.CLIENT_GITHUB,
     clientSecret: process.env.SECRET_GITHUB,
     callbackURL: process.env.URL_CALLBACK_GITHUB
+}
+
+const JWTOptions = {
+    jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]), // recibe un array de funciones que nos ayudan a extraer la informacion
+    secretOrKey: process.env.JWT_SECRET
+}
+
+function cookieExtractor(req) {
+    let token = null;
+
+    if (req && req.cookies) {
+        token = req.cookies.access_token;
+    }
+    return token
 }
 
 export const init = () => {
@@ -69,6 +84,12 @@ export const init = () => {
         done(null, newUser);
 
     }))
+
+    passport.use('jwt', new JWTStrategy(
+        JWTOptions,
+        (payload, done) => {
+            return done(null, payload)
+        }))
 
     passport.serializeUser((user, done) => {
         done(null, user._id);

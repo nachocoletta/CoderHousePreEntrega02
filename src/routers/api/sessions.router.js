@@ -2,28 +2,27 @@ import { Router } from 'express';
 import 'dotenv/config';
 import UserManager from '../../dao/UserManager.js';
 import { createHash, isValidPassword } from '../../helpers/utils.js'
-import passport
-    from 'passport';
+import passport from 'passport';
 const router = Router();
 
-// router.post('/sessions/register', async (req, res) => {
-//     // console.log('entra'); 
-//     const { body } = req;
+router.post('/sessions/register', async (req, res) => {
+    // console.log('entra'); 
+    const { body } = req;
 
-//     const newUser = await UserManager.create({
-//         ...body,
-//         password: createHash(body.password)
-//     });
+    const newUser = await UserManager.create({
+        ...body,
+        password: createHash(body.password)
+    });
 
-//     console.log('newUser', newUser);
-//     res.redirect('/login');
-// });
+    console.log('newUser', newUser);
+    res.redirect('/login');
+});
 
-router.post('/sessions/register',
-    passport.authenticate('register', { failureRedirect: '/register' }),
-    (req, res) => {
-        res.redirect('/login')
-    })
+// router.post('/sessions/register',
+//     passport.authenticate('register', { failureRedirect: '/register' }),
+//     (req, res) => {
+//         res.redirect('/login')
+//     })
 
 
 router.post('/sessions/login',
